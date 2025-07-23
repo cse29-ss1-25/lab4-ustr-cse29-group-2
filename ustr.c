@@ -38,7 +38,25 @@ Returns an empty string on invalid range.
 */
 UStr substring(UStr s, int32_t start, int32_t end) {
 	// TODO: implement this
+	if (start < 0 || end < 0 || start >= end || start >= s.codepoints || end > s.codepoints) {
+		return new_ustr("");
+	}
 
+	int32_t byte_start = utf8_byte_offset(s.contents, start);
+    	int32_t byte_end = utf8_byte_offset(s.contents, end);
+    	int32_t sub_bytes = byte_end - byte_start;
+
+	char* sub = malloc(sub_bytes + 1);
+   	if (!sub) {
+		 fprintf(stderr, "memory allocation failed in substring\n");
+		 exit(1);
+	}
+
+	memcpy(sub, s.contents + byte_start, sub_bytes);
+    	sub[sub_bytes] = '\0';
+	UStr result = new_ustr(sub);
+    	free(sub); 
+	return results;
 }
 
 /*
