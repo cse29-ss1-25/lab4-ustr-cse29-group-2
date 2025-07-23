@@ -65,6 +65,20 @@ concatenating s1 and s2.
 */
 UStr concat(UStr s1, UStr s2) {
 	// TODO: implement this
+	int32_t total_bytes = s1.bytes + s2.bytes;
+	char* combined = malloc(total_bytes +1);
+    	if (!combined) {
+		fprintf(stderr, "Memory allocation failed in concat\n");
+        	exit(1);
+	}
+
+	memcpy(combined, s1.contents, s1.bytes);
+	memcpy(combined + s1.bytes, s2.contents, s2.bytes);
+	combined[total_bytes] = '\0';
+
+    	UStr result = new_ustr(combined);
+    	free(combined);
+    	return result;
 
 }
 
