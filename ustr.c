@@ -90,7 +90,27 @@ Returns the original string if index is out of bounds.
 */
 UStr removeAt(UStr s, int32_t index) {
 	// TODO: implement this
+	if (index < 0 || index >= s.codepoints) {
+		return new_ustr(s.contents);
+	}
 
+	int32_t byte_a = utf8_byte_offset(s.contents, index);
+    	int32_t byte_b = utf8_byte_offset(s.contents, index + 1);
+    	int32_t new_len = s.bytes - (byte_b - byte_a);
+
+	char* result = malloc(new_len + 1);
+    	if (!result) {
+		fprintf(stderr, "Memory allocation failed in removeAt\n");
+        	exit(1);
+	}
+
+	memcpy(result, s.contents, byte_a);
+	memcpy(result + byte_a, s.contents + byte_b, s.bytes - byte_b);
+	result[new_len] = '\0';
+
+    	UStr u = new_ustr(result);
+    	free(result);
+    	return u;
 }
 
 /*
