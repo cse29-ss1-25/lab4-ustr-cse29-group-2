@@ -120,7 +120,31 @@ Example: reverse("apples🍎 and bananas🍌") = "🍌sananab dna 🍎selppa")
 */
 UStr reverse(UStr s) {
 	// TODO: implement this
+	char* reversed = malloc(s.bytes + 1);
+	if (!reversed) {
+		fprintf(stderr, "Memory allocation failed in reverse\n");
+        	exit(1);
+	}
 
+	int32_t start_positions[s.codepoints];
+    	int32_t cursor = 0;
+    	for (int i = 0; i < s.codepoints; i++) {
+		start_positions[i] = cursor;
+        	cursor = cursor +utf8_codepoint_length(s.contents + cursor);
+	}
+
+	int32_t write_pos = 0;
+    	for (int i = s.codepoints - 1; i >= 0; i--) {
+		int32_t byte_start = start_positions[i];
+        	int32_t cp_len = utf8_codepoint_length(s.contents + byte_start);
+        	memcpy(reversed + write_pos, s.contents + byte_start, cp_len);
+        	write_pos = write_pos + cp_len;
+	}
+
+	reversed[write_pos] = '\0';
+    	UStr u = new_ustr(reversed);
+    	free(reversed);
+    	return u;
 }
 
 
