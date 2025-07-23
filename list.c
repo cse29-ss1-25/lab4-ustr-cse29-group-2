@@ -35,7 +35,29 @@ containing all the strings in list joined by the separator.
 */
 UStr join(List* list, UStr separator) {
     // TODO: implement this
+    if (list -> size==0) return new_ustr("");
 
+    int32_t total_bytes = 0;
+    int32_t total_codepoints = 0;
+    for (int32_t i=0; i<list->size; i++) {
+        total_bytes = total_bytes + list->data[i].bytes;
+        total_codepoints = total_codepoints + list->data[i].codepoints;
+        if (i != list->size-1) {
+            total_bytes = total_bytes + separator.bytes;
+            total_codepoints = total_codepoints + separator.codepoints;
+        }
+    }
+
+    char* buffer = malloc(total_bytes + 1);
+    buffer[0]='\0';
+    for (int32_t i=0; i<list->size; i++) {
+        strcat(buffer, list->data[i].contents);
+        if (i != list->size-1) {
+            strcat(buffer, separator.contents);
+        }
+    }
+
+    return new_ustr(buffer);
 }
 
 /*
