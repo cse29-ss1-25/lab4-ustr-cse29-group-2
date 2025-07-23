@@ -56,7 +56,7 @@ UStr substring(UStr s, int32_t start, int32_t end) {
     	sub[sub_bytes] = '\0';
 	UStr result = new_ustr(sub);
     	free(sub); 
-	return results;
+	return result;
 }
 
 /*
