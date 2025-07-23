@@ -93,7 +93,16 @@ Returns 1 on success, 0 if the index is invalid (out of bounds).
 */
 int8_t listRemoveAt(List* list, int32_t index) {
     // TODO: implement this
+    if (index<0 || index >= list->size) {
+        return 0;
+    }
 
+    free_ustr(list->data[index]);
+    for (int32_t i=index; i<list->size-1; i++) {
+        list->data[i] = list->data[i+1];
+    }
+    list-> size--;
+    return 1;
 }
 
 /*
@@ -111,5 +120,25 @@ Note that the delimiter could be of a length of more than 1 character
 */
 List split(UStr s, UStr separator) {
     // TODO: implement this
+    List result = new_list(4);
+    if (separator.codepoints == 0) {
+        insert(&result, s,0);
+        return result;
+    }
 
+    char* start = s.contents;
+    char* match;
+    size_t sep_len = strlen(separator.contents);
+    while ((match = strstr(start, separator.contents)) != NULL) {
+        size_t len = match-start;
+        char* token = malloc(len+1);
+        strncpy(token, start, len);
+        token[len] = '\0';
+        insert(&result, new_ustr(token), result.size);
+        free(token);
+        start = match+sep_len;
+    }
+
+    insert(&result, new_ustr(start), result.size);
+    return result;
 }
